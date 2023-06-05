@@ -1,38 +1,87 @@
-public class Stack<T> { // Обобщенный класс Stack, параметризованный типом T
-    private Node<T> top; // Вершина стека
-    
-    private static class Node<T> { // Вложенный статический класс Node, параметризованный типом T
-        private T data; // Данные узла
-        private Node<T> next; // Ссылка на следующий узел
-        
-        public Node(T data, Node<T> next) { // Конструктор класса Node
-            this.data = data;
-            this.next = next;
-        }
+// Класс, представляющий узел стека
+class StackNode<T> {
+    private T data;
+    private StackNode<T> next;
+
+    public StackNode(T data) {
+        this.data = data;
+        this.next = null;
     }
-    
-    public void push(T data) { // Метод добавления элемента в стек
-        Node<T> node = new Node<>(data, top); // Создание нового узла
-        top = node; // Обновление вершины стека
+
+    public T getData() {
+        return data;
     }
-    
-    public T pop() { // Метод удаления элемента из стека
-        if (top == null) { // Если стек пуст, выбрасываем исключение
-            throw new EmptyStackException();
-        }
-        T data = top.data; // Получаем данные вершины стека
-        top = top.next; // Обновляем вершину стека
-        return data; // Возвращаем данные удаленного элемента
+
+    public StackNode<T> getNext() {
+        return next;
     }
-    
-    public T peek() { // Метод получения элемента с вершины стека
-        if (top == null) { // Если стек пуст, выбрасываем исключение
-            throw new EmptyStackException();
-        }
-        return top.data; // Возвращаем данные вершины стека
+
+    public void setNext(StackNode<T> next) {
+        this.next = next;
     }
-    
-    public boolean isEmpty() { // Метод проверки, пуст ли стек
+}
+
+// Класс, реализующий стек
+class Stack<T> {
+    private StackNode<T> top; // указатель на вершину стека
+
+    public Stack() {
+        this.top = null;
+    }
+
+    // Метод для проверки, является ли стек пустым
+    public boolean isEmpty() {
         return top == null;
+    }
+
+    // Метод для добавления элемента на вершину стека
+    public void push(T item) {
+        StackNode<T> newNode = new StackNode<>(item);
+
+        // Устанавливаем новый узел как вершину стека и обновляем ссылку на предыдущую вершину
+        newNode.setNext(top);
+        top = newNode;
+    }
+
+    // Метод для удаления элемента с вершины стека и возвращения его значения
+    public T pop() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Stack is empty");
+        }
+
+        // Получаем значение элемента на вершине стека
+        T item = top.getData();
+
+        // Обновляем ссылку на вершину стека
+        top = top.getNext();
+
+        return item;
+    }
+
+    // Метод для получения значения элемента на вершине стека без удаления
+    public T peek() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Stack is empty");
+        }
+
+        return top.getData();
+    }
+}
+
+// Пример использования
+public class Main {
+    public static void main(String[] args) {
+        Stack<Integer> stack = new Stack<>();
+
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+
+        System.out.println("Верхний элемент: " + stack.peek());
+
+        System.out.println("Извлеченные элементы:");
+        while (!stack.isEmpty()) {
+            System.out.println(stack.pop());
+        }
     }
 }
